@@ -189,7 +189,9 @@ public final class RecordAccumulator {
         // abortIncompleteBatches().
         appendsInProgress.incrementAndGet();
         ByteBuffer buffer = null;
-        if (headers == null) headers = Record.EMPTY_HEADERS;
+        if (headers == null) {
+            headers = Record.EMPTY_HEADERS;
+        }
         try {
             // check if we have an in-progress batch
             Deque<ProducerBatch> dq = getOrCreateDeque(tp);
@@ -230,8 +232,9 @@ public final class RecordAccumulator {
                 return new RecordAppendResult(future, dq.size() > 1 || batch.isFull(), true);
             }
         } finally {
-            if (buffer != null)
+            if (buffer != null) {
                 free.deallocate(buffer);
+            }
             appendsInProgress.decrementAndGet();
         }
     }
