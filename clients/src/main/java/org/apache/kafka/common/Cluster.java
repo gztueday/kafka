@@ -31,18 +31,19 @@ import java.util.Set;
 /**
  * A representation of a subset of the nodes, topics, and partitions in the Kafka cluster.
  */
+// 并不是一个全集,metadata的主要组成部分
 public final class Cluster {
 
     private final boolean isBootstrapConfigured;
-    private final List<Node> nodes;
-    private final Set<String> unauthorizedTopics;
-    private final Set<String> internalTopics;
+    private final List<Node> nodes;// node 列表
+    private final Set<String> unauthorizedTopics;// 未认证的 topic 列表
+    private final Set<String> internalTopics;// 内置的 topic 列表
     private final Node controller;
-    private final Map<TopicPartition, PartitionInfo> partitionsByTopicPartition;
-    private final Map<String, List<PartitionInfo>> partitionsByTopic;
-    private final Map<String, List<PartitionInfo>> availablePartitionsByTopic;
-    private final Map<Integer, List<PartitionInfo>> partitionsByNode;
-    private final Map<Integer, Node> nodesById;
+    private final Map<TopicPartition, PartitionInfo> partitionsByTopicPartition;// partition 的详细信息
+    private final Map<String, List<PartitionInfo>> partitionsByTopic;// topic 与 partition 的对应关系
+    private final Map<String, List<PartitionInfo>> availablePartitionsByTopic;//  可用（leader 不为 null）的 topic 与 partition 的对应关系
+    private final Map<Integer, List<PartitionInfo>> partitionsByNode;// node 与 partition 的对应关系
+    private final Map<Integer, Node> nodesById;// node 与 id 的对应关系
     private final ClusterResource clusterResource;
 
     /**
@@ -189,10 +190,11 @@ public final class Cluster {
      */
     public Node leaderFor(TopicPartition topicPartition) {
         PartitionInfo info = partitionsByTopicPartition.get(topicPartition);
-        if (info == null)
+        if (info == null) {
             return null;
-        else
+        } else {
             return info.leader();
+        }
     }
 
     /**

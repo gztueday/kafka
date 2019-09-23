@@ -58,18 +58,23 @@ public final class TopicPartition implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null)
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         TopicPartition other = (TopicPartition) obj;
-        if (partition != other.partition)
+        if (partition != other.partition) {
             return false;
+        }
         if (topic == null) {
-            if (other.topic != null)
+            if (other.topic != null) {
                 return false;
-        } else if (!topic.equals(other.topic))
+            }
+        } else if (!topic.equals(other.topic)) {
             return false;
+        }
         return true;
     }
 
