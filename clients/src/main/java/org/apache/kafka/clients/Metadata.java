@@ -163,28 +163,33 @@ public final class Metadata {
          AuthenticationException exception = authenticationException;
          authenticationException = null;
          return exception;
-      } else
+      } else {
          return null;
+      }
    }
 
    /**
     * Wait for metadata update until the current version is larger than the last version we know of
     */
+   // 更新 metadata 信息（根据当前 version 值来判断）
    public synchronized void awaitUpdate(final int lastVersion, final long maxWaitMs) throws InterruptedException {
       if (maxWaitMs < 0) {
          throw new IllegalArgumentException("Max time to wait for metadata updates should not be < 0 milliseconds");
       }
       long begin = System.currentTimeMillis();
       long remainingWaitMs = maxWaitMs;
-      while (this.version <= lastVersion) {
+      while (this.version <= lastVersion) {// 不断循环,直到 metadata 更新成功,version 自增
          AuthenticationException ex = getAndClearAuthenticationException();
-         if (ex != null)
+         if (ex != null) {
             throw ex;
-         if (remainingWaitMs != 0)
-            wait(remainingWaitMs);
+         }
+         if (remainingWaitMs != 0) {
+            wait(remainingWaitMs);// 阻塞线程，等待 metadata 的更新
+         }
          long elapsed = System.currentTimeMillis() - begin;
-         if (elapsed >= maxWaitMs)
+         if (elapsed >= maxWaitMs) {// timeout
             throw new TimeoutException("Failed to update metadata after " + maxWaitMs + " ms.");
+         }
          remainingWaitMs = maxWaitMs - elapsed;
       }
    }
@@ -244,17 +249,18 @@ public final class Metadata {
          for (Iterator<Map.Entry<String, Long>> it = topics.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<String, Long> entry = it.next();
             long expireMs = entry.getValue();
-            if (expireMs == TOPIC_EXPIRY_NEEDS_UPDATE)
+            if (expireMs == TOPIC_EXPIRY_NEEDS_UPDATE) {
                entry.setValue(now + TOPIC_EXPIRY_MS);
-            else if (expireMs <= now) {
+            } else if (expireMs <= now) {
                it.remove();
                log.debug("Removing unused topic {} from the metadata list, expiryMs {} now {}", entry.getKey(), expireMs, now);
             }
          }
       }
 
-      for (Listener listener : listeners)
+      for (Listener listener : listeners) {
          listener.onMetadataUpdate(cluster, unavailableTopics);
+      }
 
       String previousClusterId = cluster.clusterResource().clusterId();
 
@@ -270,8 +276,9 @@ public final class Metadata {
       // The bootstrap cluster is guaranteed not to have any useful information
       if (!cluster.isBootstrapConfigured()) {
          String clusterId = cluster.clusterResource().clusterId();
-         if (clusterId == null ? previousClusterId != null : !clusterId.equals(previousClusterId))
+         if (clusterId == null ? previousClusterId != null : !clusterId.equals(previousClusterId)) {
             log.info("Cluster ID: {}", cluster.clusterResource().clusterId());
+         }
          clusterResourceListeners.onUpdate(cluster.clusterResource());
       }
 

@@ -293,11 +293,13 @@ public class MemoryRecordsBuilder {
 
 
     public void close() {
-        if (aborted)
+        if (aborted) {
             throw new IllegalStateException("Cannot close MemoryRecordsBuilder as it has already been aborted");
+        }
 
-        if (builtRecords != null)
+        if (builtRecords != null) {
             return;
+        }
 
         validateProducerState();
 
