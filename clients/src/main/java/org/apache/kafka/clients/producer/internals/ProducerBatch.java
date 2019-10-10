@@ -97,6 +97,11 @@ public final class ProducerBatch {
 
    /**
     * Append the record to the current record set and return the relative offset within that record set
+    * producerBatch里面也会存多个消息的
+    * 而RecordAccumulator 的ConcurrentMap<TopicPartition, Deque<ProducerBatch>> batches 字段是最外层的存储
+    *
+    * 1.首先获取 Deque<ProducerBatch> dq如果dq为null或者recordsBuilder.hasRoomFor已经满了
+    * 2.如果满了就会创建一个新的ProducerBatch,没满的话就直接添加到ProducerBatch里面
     *
     * @return The RecordSend corresponding to this record or null if there isn't sufficient room.
     */
